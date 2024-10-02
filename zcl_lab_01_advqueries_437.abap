@@ -23,5 +23,5 @@ CLASS zcl_lab_01_advqueries_437 IMPLEMENTATION.
     IF lt_flights IS NOT INITIAL.
       out->write( lt_flights ).
     ENDIF.
-  ENDMETHOD.
+  ENDMETHOD.  
 ENDCLASS.
