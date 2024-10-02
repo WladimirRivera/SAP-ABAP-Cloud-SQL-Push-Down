@@ -12,21 +12,20 @@ ENDCLASS.
 
 CLASS zcl_lab_01_advqueries_437 IMPLEMENTATION.
   METHOD if_oo_adt_classrun~main.
-    " Define subquery using WITH clause
-    WITH +cte_flights AS (
-      SELECT FROM /dmo/flight
-             FIELDS carrier_id, connection_id, price
-             WHERE price gt 500
-    )
-    SELECT sf~carrier_id, sf~connection_id, sf~price
-           FROM +cte_flights as sp
-           INNER JOIN /dmo/flight AS sf ON sp~carrier_id = sf~carrier_id AND
-                                        sp~connection_id = sf~connection_id
-           INTO TABLE @DATA(lt_cte_result).
+    " Insert data using subquery
+    INSERT zspfli_437 FROM (
+      SELECT FROM /dmo/carrier
+             FIELDS carrier_id,
+                    name,
+                    currency_code
+             WHERE currency_code GT 'EUR'
+    ).
+
+    " Select data to verify insertion
+    SELECT * FROM zspfli_437 INTO TABLE @DATA(lt_inserted_data).
 
     " Display results
-    IF lt_cte_result IS NOT INITIAL.
-      out->write( lt_cte_result ).
+    IF lt_inserted_data IS NOT INITIAL.
+      out->write( lt_inserted_data ).
     ENDIF.
   ENDMETHOD.
-ENDCLASS.
