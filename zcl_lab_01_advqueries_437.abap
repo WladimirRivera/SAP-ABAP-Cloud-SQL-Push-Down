@@ -15,7 +15,8 @@ CLASS zcl_lab_01_advqueries_437 IMPLEMENTATION.
 
     " Select flights with price > 500
     SELECT  FROM /dmo/flight
-    FIELDS *
+    FIELDS carrier_id,
+           connection_id
     WHERE price GT 500
            INTO TABLE @DATA(lt_flights).
 
