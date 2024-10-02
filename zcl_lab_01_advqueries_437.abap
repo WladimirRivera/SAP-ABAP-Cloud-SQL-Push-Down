@@ -12,21 +12,19 @@ ENDCLASS.
 
 CLASS zcl_lab_01_advqueries_437 IMPLEMENTATION.
   METHOD if_oo_adt_classrun~main.
-    DATA: lv_price   TYPE /dmo/flight_price VALUE 500,
-          lv_carrier TYPE /dmo/carrier_id VALUE 'AA'.
-
-    " Select flights with price > 500 and carrier_id = AA
-    SELECT  FROM /dmo/flight
-    FIELDS carrier_id,
-            connection_id,
-            price
-    WHERE carrier_id EQ @lv_carrier AND
-          price GT @lv_price
-    INTO TABLE @DATA(lt_flights).
+    " Select flights and categorize prices
+    SELECT FROM /dmo/flight
+           FIELDS carrier_id, connection_id, price,
+                  CASE
+                    WHEN price lt 300 THEN 'Low'
+                    WHEN price BETWEEN 300 AND 700 THEN 'Medium'
+                    ELSE 'High'
+                  END AS price_category
+           INTO TABLE @DATA(lt_price_category).
 
     " Display results
-    IF lt_flights IS NOT INITIAL.
-      out->write( lt_flights ).
+    IF lt_price_category IS NOT INITIAL.
+      out->write( lt_price_category ).
     ENDIF.
   ENDMETHOD.
 ENDCLASS.
