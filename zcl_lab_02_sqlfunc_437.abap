@@ -12,17 +12,17 @@ ENDCLASS.
 
 CLASS zcl_lab_02_sqlfunc_437 IMPLEMENTATION.
   METHOD if_oo_adt_classrun~main.
-    " Extractions - Properties Dates
-    SELECT SINGLE
-      FROM /dmo/flight
-      FIELDS carrier_id,
-             connection_id,
-             flight_date,
-             extract_year( flight_date ) AS year,
-             extract_month( flight_date ) AS month,
-             extract_day( flight_date ) AS day
-      WHERE carrier_id EQ 'LH' AND connection_id EQ '400'
-      INTO @DATA(ls_result).
+    " UUID – Universal Unique Identifier
+
+    DELETE FROM zspfli_437.
+
+    INSERT zspfli_437 FROM ( SELECT FROM /dmo/flight
+                               FIELDS uuid( ) AS id,
+                                      carrier_id,
+                                      currency_code ).
+    SELECT FROM zspfli_437
+        FIELDS *
+        INTO TABLE @DATA(ls_result).
 
     " Display results
     IF ls_result IS NOT INITIAL.
