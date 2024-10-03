@@ -12,26 +12,18 @@ ENDCLASS.
 
 CLASS zcl_lab_02_sqlfunc_437 IMPLEMENTATION.
   METHOD if_oo_adt_classrun~main.
-    " Functions for Character Strings
+    " Functions for Dates
     SELECT SINGLE
-         FROM /dmo/flight
-         FIELDS carrier_id,
-                connection_id,
-                flight_date,
-                left( carrier_id, 2 ) AS left_id,
-                right( carrier_id, 2 ) AS right_id,
-                lpad( carrier_id, 5, '0' ) AS lpad_id,
-                rpad( carrier_id, 5, '0' ) AS rpad_id,
-                ltrim( carrier_id, 'L' ) AS ltrim_id,
-                rtrim( carrier_id, 'H' ) AS rtrim_id,
-                instr( carrier_id, 'LH' ) AS instr_id,
-                substring( carrier_id, 1, 2 ) AS substring_id,
-                length( carrier_id ) AS length_id,
-                replace( carrier_id, 'LH', 'XX' ) AS replace_id,
-                lower( carrier_id ) AS lower_id,
-                upper( carrier_id ) AS upper_id
-         WHERE carrier_id EQ 'LH'
-         INTO @DATA(ls_result).
+        FROM /dmo/flight
+        FIELDS carrier_id,
+               connection_id,
+               flight_date,
+               dats_is_valid( flight_date ) AS valid_date,
+               dats_add_days( flight_date, 30 ) AS date_plus_30,
+               dats_days_between( flight_date, flight_date ) AS days_between,
+               dats_add_months( flight_date, -2 ) AS date_minus_2_months
+        WHERE carrier_id EQ 'LH' AND connection_id EQ '400'
+        INTO @DATA(ls_result).
 
     " Display results
     IF ls_result IS NOT INITIAL.
