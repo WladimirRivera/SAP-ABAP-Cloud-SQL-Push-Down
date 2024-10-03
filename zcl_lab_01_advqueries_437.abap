@@ -12,19 +12,19 @@ ENDCLASS.
 
 CLASS zcl_lab_01_advqueries_437 IMPLEMENTATION.
   METHOD if_oo_adt_classrun~main.
-  " Get common rows using INTERSECT
+    " Get rows using EXCEPT
     SELECT FROM /dmo/flight
            FIELDS carrier_id, connection_id, price
-           WHERE price gt 4000
-    INTERSECT
+           WHERE price GT 4000
+    EXCEPT
     SELECT FROM /dmo/flight
            FIELDS carrier_id, connection_id, price
-           WHERE price lt 6000
-           INTO TABLE @DATA(lt_intersect_flights).
+           WHERE price GT 6000
+           INTO TABLE @DATA(lt_except_flights).
 
     " Display results
-    IF lt_intersect_flights IS NOT INITIAL.
-      out->write( lt_intersect_flights ).
+    IF lt_except_flights IS NOT INITIAL.
+      out->write( lt_except_flights ).
     ENDIF.
   ENDMETHOD.
 ENDCLASS.
