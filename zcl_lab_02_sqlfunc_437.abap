@@ -12,18 +12,37 @@ ENDCLASS.
 
 CLASS zcl_lab_02_sqlfunc_437 IMPLEMENTATION.
   METHOD if_oo_adt_classrun~main.
-    " Functions for Dates
-    SELECT SINGLE
-        FROM /dmo/flight
-        FIELDS carrier_id,
-               connection_id,
-               flight_date,
-               dats_is_valid( flight_date ) AS valid_date,
-               dats_add_days( flight_date, 30 ) AS date_plus_30,
-               dats_days_between( flight_date, flight_date ) AS days_between,
-               dats_add_months( flight_date, -2 ) AS date_minus_2_months
-        WHERE carrier_id EQ 'LH' AND connection_id EQ '400'
-        INTO @DATA(ls_result).
+    DATA lt_temp_flights TYPE ztemp_flight_437.
+
+    " Functions for Timestamp
+    GET TIME STAMP FIELD DATA(lv_timestamp).
+
+    " Insert data into temporary table
+    lt_temp_flights = VALUE #(  client = 100
+                                carrier_id = 'SQ'
+                                connection_id = '0001'
+                                flight_date = cl_abap_context_info=>get_system_date( )
+                                time = lv_timestamp ).
+
+
+    INSERT ztemp_flight_437 FROM @lt_temp_flights.
+    TRY.
+        SELECT SINGLE
+    FROM ztemp_flight_437
+    FIELDS carrier_id,
+             connection_id,
+             flight_date,
+           tstmp_is_valid( time ) AS valid_timestamp,
+           tstmp_seconds_between( tstmp1 = tstmp_current_utctimestamp( ),
+                                  tstmp2 = tstmp_add_seconds( tstmp = time,
+                                                              seconds = CAST( 60 AS DEC( 15,0 ) ) ),
+                                  on_error = @sql_tstmp_seconds_between=>set_to_null
+            ) AS seconds_between
+    INTO @DATA(ls_result).
+      CATCH cx_sy_open_sql_db INTO DATA(lx_sqldb).
+        out->write( lx_sqldb->get_text( ) ).
+        RETURN.
+    ENDTRY.
 
     " Display results
     IF ls_result IS NOT INITIAL.
