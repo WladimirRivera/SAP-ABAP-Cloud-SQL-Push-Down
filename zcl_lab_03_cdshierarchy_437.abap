@@ -12,16 +12,12 @@ ENDCLASS.
 
 CLASS zcl_lab_03_cdshierarchy_437 IMPLEMENTATION.
   METHOD if_oo_adt_classrun~main.
-     " Path Expression - Associations
-    SELECT FROM /dmo/i_flight
-         FIELDS AirlineID,
-                ConnectionID,
-                FlightDate,
-                \_Airline[ (1) ]-Name AS Name,
-                \_Airline[ CurrencyCode = 'EUR' ]-Name AS AirlineNameEUR,
-                \_Airline\_Currency-CurrencyISOCode,
-                \_Airline\_Currency\_Text[ Language = 'E' AND Currency = 'EUR' ]-CurrencyShortName
-         INTO TABLE @DATA(lt_results).
+    DATA lc_var TYPE i VALUE 1.
+    " CDS with parameters
+
+    SELECT FROM zcds_aviation_437( pId = @lc_var )
+        FIELDS *
+        INTO TABLE @DATA(lt_results).
 
     " Display results
     IF lt_results IS NOT INITIAL.
