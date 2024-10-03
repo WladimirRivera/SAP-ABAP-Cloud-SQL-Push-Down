@@ -12,20 +12,19 @@ ENDCLASS.
 
 CLASS zcl_lab_01_advqueries_437 IMPLEMENTATION.
   METHOD if_oo_adt_classrun~main.
-    " Insert data using subquery
-    INSERT zspfli_437 FROM (
-      SELECT FROM /dmo/carrier
-             FIELDS carrier_id,
-                    name,
-                    currency_code
-             WHERE currency_code GT 'EUR'
-    ).
-
-    " Select data to verify insertion
-    SELECT * FROM zspfli_437 INTO TABLE @DATA(lt_inserted_data).
+    " Combine results using UNION
+    SELECT FROM /dmo/flight
+           FIELDS carrier_id, connection_id, price
+           WHERE price lt 4000
+    UNION
+    SELECT FROM /dmo/flight
+           FIELDS carrier_id, connection_id, price
+           WHERE price gt 6000
+           INTO TABLE @DATA(lt_union_flights).
 
     " Display results
-    IF lt_inserted_data IS NOT INITIAL.
-      out->write( lt_inserted_data ).
+    IF lt_union_flights IS NOT INITIAL.
+      out->write( lt_union_flights ).
     ENDIF.
   ENDMETHOD.
+ENDCLASS.
