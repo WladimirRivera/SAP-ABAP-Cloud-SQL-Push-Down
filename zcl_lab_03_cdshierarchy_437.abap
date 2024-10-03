@@ -12,18 +12,24 @@ ENDCLASS.
 
 CLASS zcl_lab_03_cdshierarchy_437 IMPLEMENTATION.
   METHOD if_oo_adt_classrun~main.
-    " Hierarchy – CDS
+    " Hierarchical Selection
     TRY.
         SELECT FROM HIERARCHY(  SOURCE zcds_aviation_437
                                 CHILD TO PARENT ASSOCIATION _Aviation
                                 START WHERE id = 1
                                 SIBLINGS ORDER BY id ASCENDING
-                                DEPTH 2
                                 MULTIPLE PARENTS ALLOWED
+                                ORPHANS ROOT
                                 CYCLES BREAKUP )
                     FIELDS Id,
                            ParentId,
-                           AviationName
+                           AviationName,
+                           hierarchy_is_cycle,
+                           hierarchy_is_orphan,
+                           hierarchy_level,
+                           hierarchy_parent_rank,
+                           hierarchy_rank,
+                           hierarchy_tree_size
                     INTO TABLE @DATA(lt_results).
 
         " Display results
